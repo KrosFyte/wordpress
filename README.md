@@ -1,6 +1,5 @@
 WPOK
 ====
-<br>
 `WordPress` for `OpenShift` with `KODExplorer`
 ----------------------------------------
 <br>
