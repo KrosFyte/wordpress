@@ -1,0 +1,1 @@
+<?php exit;?>{"admin":{"name":"admin","password":"ea512283a960daeeae9dd8c280959174","role":"root","status":1}}
