@@ -22,4 +22,9 @@ Tips:
 　　　建议新建应用时搜索Cacti，并且填写该Git库地址，方便快速搭建博客  
 　　　【Cacti这货把所有需要的东西都包含了，自带Cron可以使自动重启脚本直接生效  
 　　　【`PHP 5.3`+`MySQL 5.1`+`Cron 1.4`  
-　　　【有需要的话再自己手动添加个`phpMyAdmin 4.0`就全了<br><br>
+　　　【有需要的话再自己手动添加个`phpMyAdmin 4.0`就全了  <br>
+　　　需要给予自动重启脚本执行权限   
+　　　Code:
+```Bash
+chmod 711 $OPENSHIFT_REPO_DIR/.openshift/cron/minutely/reboot.sh
+```
