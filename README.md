@@ -20,6 +20,6 @@ Tips:
 　　　可通过修改 file/data/system/member.php 中的MD5值来更改管理员密码  <br><br>
 　　③OpenShift：  
 　　　建议新建应用时搜索Cacti，并且填写该Git库地址，方便快速搭建博客  
-　　　【Cacti这货吧所有需要的东西都包含了，自带Cron可以使自动重启脚本直接生效  
+　　　【Cacti这货把所有需要的东西都包含了，自带Cron可以使自动重启脚本直接生效  
 　　　【`PHP 5.3`+`MySQL 5.1`+`Cron 1.4`  
 　　　【有需要的话再自己手动添加个`phpMyAdmin 4.0`就全了<br><br>
