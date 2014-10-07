@@ -15,16 +15,16 @@
 
 // ** MySQL 设置 - 具体信息来自您正在使用的主机 ** //
 /** WordPress数据库的名称 */
-define('DB_NAME', 'database_name_here');
+define('DB_NAME', getenv('OPENSHIFT_APP_NAME'));
 
 /** MySQL数据库用户名 */
-define('DB_USER', 'username_here');
+define('DB_USER', getenv('OPENSHIFT_MYSQL_DB_USERNAME'));
 
 /** MySQL数据库密码 */
-define('DB_PASSWORD', 'password_here');
+define('DB_PASSWORD', getenv('OPENSHIFT_MYSQL_DB_PASSWORD'));
 
 /** MySQL主机 */
-define('DB_HOST', 'localhost');
+define('DB_HOST', getenv('OPENSHIFT_MYSQL_DB_HOST') . ':' . getenv('OPENSHIFT_MYSQL_DB_PORT'));
 
 /** 创建数据表时默认的文字编码 */
 define('DB_CHARSET', 'utf8');
@@ -42,14 +42,52 @@ define('DB_COLLATE', '');
  *
  * @since 2.6.0
  */
-define('AUTH_KEY',         'put your unique phrase here');
-define('SECURE_AUTH_KEY',  'put your unique phrase here');
-define('LOGGED_IN_KEY',    'put your unique phrase here');
-define('NONCE_KEY',        'put your unique phrase here');
-define('AUTH_SALT',        'put your unique phrase here');
-define('SECURE_AUTH_SALT', 'put your unique phrase here');
-define('LOGGED_IN_SALT',   'put your unique phrase here');
-define('NONCE_SALT',       'put your unique phrase here');
+
+// 定义OpenShift的安全变量函数
+require_once(getenv('OPENSHIFT_REPO_DIR') . '.openshift/openshift.inc');
+
+// 设置默认密钥
+$_default_keys = array(
+  'AUTH_KEY'          => ' w*lE&r=t-;!|rhdx5}vlF+b=+D>a)R:nTY1Kdrw[~1,xDQS]L&PA%uyZ2:w6#ec',
+  'SECURE_AUTH_KEY'   => '}Sd%ePgS5R[KwDxdBt56(DM:0m1^4)-k6_p8}|C:[-ei:&qA)j!X`:7d-krLZM*5',
+  'LOGGED_IN_KEY'     => '$l^J?o)!zhp6s[-x^ckF}|BjU4d+(g1as)n/Q^s+k|,ZZc@E^h%Rx@VTm|0|?]6R',
+  'NONCE_KEY'         => '#f^JM8d^!sVsq]~|4flCZHdaTy.-I.f+1tc[!h?%-+]U}|_8qc K=k;]mXePl-4v',
+  'AUTH_SALT'         => 'I_wL2t!|mSw_z_ zyIY:q6{IHw:R1yTPAO^%!5,*bF5^VX`5aO4]D=mtu~6]d}K?',
+  'SECURE_AUTH_SALT'  => '&%j?6!d<3IR%L[@iz=^OH!oHRXs4W|D,VCD7w%TC.uUa`NpOH_XXpGtL$A]{+pv9',
+  'LOGGED_IN_SALT'    => 'N<mft[~OZp0&Sn#t(IK2px0{KloRcjvIJ1+]:,Ye]>tb*_aM8P&2-bU~_Z>L/n(k',
+  'NONCE_SALT'        => 'u E-DQw%[k7l8SX=fsAVT@|_U/~_CUZesq{v(=y2}#X&lTRL{uOVzw6b!]`frTQ|'
+);
+
+// 此函数被openshift_secure函数调用并传递一个数组
+function make_secure_key($args) {
+  $hash = $args['hash'];
+  $key  = $args['variable'];
+  $original = $args['original'];
+
+	$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  $chars .= '!@#$%^&*()';
+  $chars .= '-_ []{}<>~`+=,.;:/?|';
+
+  // 将Hash转为Int作为伪随机数Seed
+  srand(hexdec(substr($hash,0,8)));
+  // 创建一个与默认密钥长度相同的字符串
+  $val = '';
+  for($i = 1; $i <= strlen($original); $i++){
+    $val .= substr( $chars, rand(0,strlen($chars))-1, 1);
+  }
+  // 重置伪随机数生成器
+  srand();
+  // 返回值
+  return $val;
+}
+
+// 创建OpenShift密钥（如果不是在OpenShift上则返回默认密钥）
+$array = openshift_secure($_default_keys,'make_secure_key');
+
+// 循环定义返回值
+foreach ($array as $key => $value) {
+  define($key,$value);
+}
 
 /**#@-*/
 
